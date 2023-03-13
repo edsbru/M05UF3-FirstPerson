@@ -9,33 +9,54 @@ public class CharacterController : MonoBehaviour
     public Vector2 rotationLimit;
     public Rigidbody rb;
     public float speed;
+    string temp;
     // Start is called before the first frame update
     void Start()
     {
-
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
     void Update()
     {
         View();
+    }
+
+    private void FixedUpdate()
+    {
         Move();
     }
 
     void Move()
     {
-        float horizontal = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
-        float vertical = Input.GetAxis("Vertical") * speed * Time.deltaTime;
-       
-        transform.position += transform.forward * vertical + transform.right * horizontal;
-    }
+        Vector2 temp = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        if(temp.magnitude > 1f)
+        {
+            temp = temp.normalized;
+        }
+        temp *= speed * Time.fixedDeltaTime;
 
+        transform.position += transform.forward * temp.y + transform.right * temp.x;
+    }
     void View()
     {
         float horizontal = Input.GetAxis("Mouse X") * sensitivity.x * Time.deltaTime;
-        float vertical = Input.GetAxis("Mouse Y") * sensitivity.x * Time.deltaTime;
 
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y + horizontal, transform.eulerAngles.z);
-        cam.transform.eulerAngles = new Vector3(cam.transform.eulerAngles.x + vertical, cam.transform.eulerAngles.y, cam.transform.eulerAngles.z);
+
+
+
+        float vertical = Input.GetAxis("Mouse Y") * sensitivity.y * Time.deltaTime;
+
+        float anguloCorregido = cam.transform.localEulerAngles.x;
+        if (anguloCorregido > 90)
+        {
+            anguloCorregido -= 360;
+        }
+        vertical = Mathf.Clamp(anguloCorregido + vertical, rotationLimit.x, rotationLimit.y);
+        
+
+
+        cam.transform.localEulerAngles = new Vector3(vertical, cam.transform.localEulerAngles.y, cam.transform.localEulerAngles.z);
     }
 }
