@@ -15,4 +15,13 @@ public class Bullet : MonoBehaviour
         rb.AddForce(transform.forward * speed);
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == "Target")
+        {
+            Destroy(gameObject);
+            Destroy(collision.gameObject);
+            Score.scoreValue += 10;
+        }
+    }
 }
