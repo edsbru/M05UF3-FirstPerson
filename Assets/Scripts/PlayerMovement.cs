@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody rb;
     public float speed;
     public float jumpForce;
+    public float camSensitivity;
 
     public Transform groundedRaycastBegin;
     public Transform groundedRaycastEnd;
@@ -16,6 +17,8 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        Cursor.visible= false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
@@ -23,6 +26,18 @@ public class PlayerMovement : MonoBehaviour
     {
         HorizontalMovement();
         Jump();
+
+        // Miramos que tanto se ha movido el mouse
+        // haciendo la resta entre la posicion del frame anterior y la posicion en este frame
+        Vector3 movimientoMouse = new Vector2(Input.GetAxis("Mouse X") * camSensitivity, Input.GetAxis("Mouse Y")* camSensitivity);// Input.mousePosition - lastFrameMousePosition;
+
+        // Giramos en el eje vertical el player en función del movimiento del mouse
+        transform.RotateAround(transform.position, transform.up, movimientoMouse.x);
+        // giramos la camara en el eje horizontal en función del movimiento del mouse 
+        
+        Camera.main.transform.RotateAround(transform.position, transform.right, -movimientoMouse.y);
+        
+
     }
 
     void Jump()
@@ -59,22 +74,22 @@ public class PlayerMovement : MonoBehaviour
         // los ifs lo modifican
         if (Input.GetKey(KeyCode.W))
         {
-            direction += Vector3.forward;
+            direction += transform.forward;
         }
 
         if (Input.GetKey(KeyCode.A))
         {
-            direction += Vector3.left;
+            direction -= transform.right;
         }
 
         if (Input.GetKey(KeyCode.S))
         {
-            direction += Vector3.back;
+            direction -= transform.forward;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            direction += Vector3.right;
+            direction += transform.right;
         }
 
         // aplicamos la direccion y el speed al rb
