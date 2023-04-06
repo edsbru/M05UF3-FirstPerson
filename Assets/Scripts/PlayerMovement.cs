@@ -13,11 +13,12 @@ public class PlayerMovement : MonoBehaviour
     public Transform groundedRaycastEnd;
 
 
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        Cursor.visible= false;
+        Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -29,14 +30,26 @@ public class PlayerMovement : MonoBehaviour
 
         // Miramos que tanto se ha movido el mouse
         // haciendo la resta entre la posicion del frame anterior y la posicion en este frame
-        Vector3 movimientoMouse = new Vector2(Input.GetAxis("Mouse X") * camSensitivity, Input.GetAxis("Mouse Y")* camSensitivity);// Input.mousePosition - lastFrameMousePosition;
+        Vector2 movimientoMouse = new Vector2(
+            // movimiento del mouse en X
+            Input.GetAxis("Mouse X") * camSensitivity,
+            // movimiento del mouse en Y
+            Input.GetAxis("Mouse Y") * camSensitivity
+        );
 
         // Giramos en el eje vertical el player en función del movimiento del mouse
         transform.RotateAround(transform.position, transform.up, movimientoMouse.x);
-        // giramos la camara en el eje horizontal en función del movimiento del mouse 
         
-        Camera.main.transform.RotateAround(transform.position, transform.right, -movimientoMouse.y);
-        
+        // Giramos la camara en el eje horizontal en función del movimiento del mouse 
+        Camera.main.transform.RotateAround(Camera.main.transform.position, transform.right, -movimientoMouse.y);
+
+        float diferenciaAngularForward = Vector3.Angle(transform.forward, Camera.main.transform.forward);
+
+        if(diferenciaAngularForward >= 85f)
+        {
+            // Invertimos la rotacion
+            Camera.main.transform.RotateAround(Camera.main.transform.position, transform.right, movimientoMouse.y);
+        }
 
     }
 
@@ -93,9 +106,12 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // aplicamos la direccion y el speed al rb
-        // (newX, 0, newZ)  +         (0, oldY, 0)          = (newX, oldY, newZ)  
-        rb.velocity = direction * speed + (Vector3.up * rb.velocity.y);
-        // | 
-        // '---> (0,1,0) * oldY = (0,oldY,0)
+        Vector3 nuevaVelocidad = direction * speed;
+        // para conservar la velocidad vertical:
+        nuevaVelocidad.y = rb.velocity.y;
+        
+        rb.velocity = nuevaVelocidad;
+
+
     }
 }
