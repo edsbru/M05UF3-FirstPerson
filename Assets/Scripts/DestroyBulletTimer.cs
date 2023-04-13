@@ -37,7 +37,12 @@ public class DestroyBulletTimer : MonoBehaviour
 
         if (tiempoAcumuladoEntreFrames >= 2.0f)
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Destroy(gameObject);
     }
 }
