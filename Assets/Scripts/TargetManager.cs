@@ -10,24 +10,23 @@ public class TargetManager : MonoBehaviour
 
     public static Color currentColor;
 
-    Color[] colors = { Color.red, Color.blue, Color.green };
+    public static TargetManager instance;
+
+    public static Color[] colors = { Color.red, Color.blue, Color.green };
     // Start is called before the first frame update
     void Start()
     {
+        instance = this;
         srCurrentTarget.color = colors[Random.Range(0, 3)];
         srNextTarget.color = colors[Random.Range(0, 3)];
         currentColor = srCurrentTarget.color;
     }
 
     // Update is called once per frame
-    void Update()
+    public void OnTargetHit()
     {
-
-        if (Input.GetKeyDown(KeyCode.Space)) 
-        {
             srCurrentTarget.color = srNextTarget.color;
             srNextTarget.color = colors[Random.Range(0,3)];
             currentColor = srCurrentTarget.color;
-        }
     }
 }
