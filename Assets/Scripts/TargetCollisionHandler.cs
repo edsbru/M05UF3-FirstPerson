@@ -24,6 +24,7 @@ public class TargetCollisionHandler : MonoBehaviour
         if (target != null && target.targetColor == TargetManager.currentColor)
         {
             TargetManager.instance.OnTargetHit();
+            ScoreManager.instance.IncreaseScore();
         }
     }
 }
