@@ -22,6 +22,9 @@ public class PlayerMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+    float verticalRotation = 0f;
+    float horizontalRotation = 0f;
+
     // Update is called once per frame
     void Update()
     {
@@ -38,17 +41,22 @@ public class PlayerMovement : MonoBehaviour
         );
 
         // Giramos en el eje vertical el player en función del movimiento del mouse
-        transform.RotateAround(transform.position, transform.up, movimientoMouse.x);
+        verticalRotation += movimientoMouse.x;
         
         // Giramos la camara en el eje horizontal en función del movimiento del mouse 
-        Camera.main.transform.RotateAround(Camera.main.transform.position, transform.right, -movimientoMouse.y);
+        horizontalRotation+= movimientoMouse.y;
+
+        //aplicamos rotacion
+        transform.rotation = Quaternion.Euler(new Vector3(-horizontalRotation ,verticalRotation, 0));
 
         float diferenciaAngularForward = Vector3.Angle(transform.forward, Camera.main.transform.forward);
 
         if(diferenciaAngularForward >= 85f)
         {
+            horizontalRotation -= movimientoMouse.y;
             // Invertimos la rotacion
-            Camera.main.transform.RotateAround(Camera.main.transform.position, transform.right, movimientoMouse.y);
+            transform.rotation = Quaternion.Euler(new Vector3(-horizontalRotation, verticalRotation, 0));
+
         }
 
     }
